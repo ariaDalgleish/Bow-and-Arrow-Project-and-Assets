@@ -13,7 +13,11 @@ public class PullInteraction : XRBaseInteractable
 
     private LineRenderer _lineRenderer;
     private IXRSelectInteractable pullingInteractor = null;
-
+    protected override void OnSelectEntered(SelectEnterEventArgs args)
+    {
+        base.OnSelectEntered(args);
+        SetPullInteractor(args);
+    }
     protected override void Awake()
     {
         base.Awake();
@@ -53,7 +57,10 @@ public class PullInteraction : XRBaseInteractable
 
         targetDirection.Normalize();
         float pullValue = Vector3.Dot(pullDirection, targetDirection) / maxLength;
-        return Mathf.Clamp(pullValue, 0.0f, 1.0f);
+        pullValue = Mathf.Clamp(pullValue, 0.0f, 1.0f);
+
+        Debug.Log($"Pull Value: {pullValue}");
+        return pullValue;
     }
 
     private void UpdateString()
@@ -61,5 +68,7 @@ public class PullInteraction : XRBaseInteractable
         Vector3 linePosition = Vector3.forward * Mathf.Lerp(start.transform.localPosition.z, end.transform.localPosition.z, pullAmount);
         notch.transform.localPosition = new Vector3(notch.transform.localPosition.x, notch.transform.localPosition.y, linePosition.z + .2f);
         _lineRenderer.SetPosition(1, linePosition);
+
+        Debug.Log($"String Updated: {notch.transform.localPosition}");
     }
 }
